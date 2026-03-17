@@ -1,0 +1,1125 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprender Brincando</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&amp;family=Quicksand:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet">
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .fun-title {
+            font-family: 'Baloo 2', cursive;
+        }
+
+        /* Animated background bubbles */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: floatBubble 8s ease-in-out infinite;
+        }
+
+        @keyframes floatBubble {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-30px) scale(1.1);
+            }
+        }
+
+        /* Nav styles */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Card hover */
+        .activity-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Text reveal */
+        .text-reveal {
+            overflow: hidden;
+        }
+
+        .text-reveal-inner {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        /* Scroll fade */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        /* Quiz styles */
+        .quiz-option {
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .quiz-option:hover {
+            transform: scale(1.05);
+        }
+
+        .quiz-option.correct {
+            border-color: #22c55e;
+            background: #dcfce7 !important;
+        }
+
+        .quiz-option.wrong {
+            border-color: #ef4444;
+            background: #fee2e2 !important;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-8px);
+            }
+
+            75% {
+                transform: translateX(8px);
+            }
+        }
+
+        /* Story card */
+        .story-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .story-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Confetti */
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Star rating animation */
+        .star-pop {
+            animation: starPop 0.4s ease-out;
+        }
+
+        @keyframes starPop {
+            0% {
+                transform: scale(0);
+            }
+
+            70% {
+                transform: scale(1.3);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Wave divider */
+        .wave-divider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+
+        .wave-divider svg {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 60px;
+        }
+
+        /* Smooth section transitions */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Word game */
+        .letter-slot {
+            width: 44px;
+            height: 52px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-radius: 12px;
+            margin: 0 3px;
+            transition: all 0.3s;
+        }
+
+        /* Math challenge */
+        .math-btn {
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .math-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .math-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Scrollbar styling */
+        .app-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .app-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .app-wrapper::-webkit-scrollbar-thumb {
+            background: #c084fc;
+            border-radius: 4px;
+        }
+    </style>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full">
+    <div class="app-wrapper" id="appWrapper"><!-- NAVIGATION -->
+        <nav id="mainNav" style="background: #6d28d9;" class="sticky top-0 z-50 shadow-lg">
+            <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')"><span
+                        class="text-3xl">🌟</span> <span id="navTitle"
+                        class="fun-title text-white text-xl font-bold hidden sm:block">Aprender Brincando</span>
+                </div>
+                <div class="flex gap-2 sm:gap-6"><button
+                        class="nav-link text-white font-semibold text-sm sm:text-base px-2 py-1"
+                        style="--underline-color: #facc15;" onclick="navigateTo('home')"> <span
+                            class="hidden sm:inline">🏠 </span>Início </button> <button
+                        class="nav-link text-white font-semibold text-sm sm:text-base px-2 py-1"
+                        onclick="navigateTo('activities')"> <span class="hidden sm:inline">🎮 </span>Atividades
+                    </button> <button class="nav-link text-white font-semibold text-sm sm:text-base px-2 py-1"
+                        onclick="navigateTo('stories')"> <span class="hidden sm:inline">📚 </span>Histórias </button>
+                    <button class="nav-link text-white font-semibold text-sm sm:text-base px-2 py-1"
+                        onclick="navigateTo('contact')"> <span class="hidden sm:inline">💌 </span>Contato </button>
+                </div>
+            </div>
+            <style>
+                .nav-link::after {
+                    background: #facc15;
+                }
+            </style>
+        </nav><!-- ==================== HOME PAGE ==================== -->
+        <section id="page-home" class="page-section active"><!-- Hero -->
+            <div id="heroSection" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 40%, #f472b6 100%);"
+                class="relative overflow-hidden py-16 sm:py-24 px-4"><!-- Decorative bubbles -->
+                <div class="bubble"
+                    style="width:80px;height:80px;background:#facc15;top:10%;left:5%;animation-delay:0s;"></div>
+                <div class="bubble"
+                    style="width:120px;height:120px;background:#34d399;top:20%;right:10%;animation-delay:2s;"></div>
+                <div class="bubble"
+                    style="width:60px;height:60px;background:#60a5fa;bottom:15%;left:20%;animation-delay:4s;"></div>
+                <div class="bubble"
+                    style="width:90px;height:90px;background:#fb923c;bottom:10%;right:25%;animation-delay:1s;"></div>
+                <div class="bubble"
+                    style="width:50px;height:50px;background:#f9a8d4;top:50%;left:50%;animation-delay:3s;"></div>
+                <div class="max-w-4xl mx-auto text-center relative z-10">
+                    <div class="text-reveal mb-4">
+                        <div class="text-6xl sm:text-8xl text-reveal-inner" id="heroEmoji">
+                            🚀
+                        </div>
+                    </div>
+                    <div class="text-reveal mb-4">
+                        <h1 id="heroTitle"
+                            class="fun-title text-reveal-inner text-white text-4xl sm:text-6xl lg:text-7xl font-extrabold drop-shadow-lg">
+                            Aprender Brincando</h1>
+                    </div>
+                    <div class="text-reveal mb-8">
+                        <p id="heroSubtitle" class="text-reveal-inner text-white/90 text-lg sm:text-2xl font-medium">
+                            Explore, aprenda e divirta-se!</p>
+                    </div>
+                    <div class="text-reveal"><button
+                            class="text-reveal-inner font-bold text-lg sm:text-xl px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95"
+                            style="background: #facc15; color: #7c3aed;" onclick="navigateTo('activities')"> 🎮 Começar
+                            a Brincar! </button>
+                    </div>
+                </div>
+            </div><!-- Wave -->
+            <div class="wave-divider"
+                style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 40%, #f472b6 100%);">
+                <svg viewbox="0 0 1200 60" preserveaspectratio="none">
+                    <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="#fef3c7" />
+                </svg>
+            </div><!-- Features Section -->
+            <div style="background: #fef3c7;" class="py-16 px-4">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="fun-title text-3xl sm:text-4xl font-bold text-center mb-12 scroll-fade"
+                        style="color: #7c3aed;">O que você encontra aqui? ✨</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="scroll-fade rounded-3xl p-6 text-center shadow-lg" style="background: white;">
+                            <div class="text-5xl mb-4">
+                                🧩
+                            </div>
+                            <h3 class="fun-title text-xl font-bold mb-2" style="color: #7c3aed;">Jogos</h3>
+                            <p class="text-gray-600">Adivinhe palavras e teste seu conhecimento!</p>
+                        </div>
+                        <div class="scroll-fade rounded-3xl p-6 text-center shadow-lg" style="background: white;">
+                            <div class="text-5xl mb-4">
+                                🐾
+                            </div>
+                            <h3 class="fun-title text-xl font-bold mb-2" style="color: #ec4899;">Curiosidades</h3>
+                            <p class="text-gray-600">Descubra fatos incríveis sobre animais!</p>
+                        </div>
+                        <div class="scroll-fade rounded-3xl p-6 text-center shadow-lg" style="background: white;">
+                            <div class="text-5xl mb-4">
+                                🧮
+                            </div>
+                            <h3 class="fun-title text-xl font-bold mb-2" style="color: #f59e0b;">Matemática</h3>
+                            <p class="text-gray-600">Desafios divertidos com números!</p>
+                        </div>
+                        <div class="scroll-fade rounded-3xl p-6 text-center shadow-lg" style="background: white;">
+                            <div class="text-5xl mb-4">
+                                📖
+                            </div>
+                            <h3 class="fun-title text-xl font-bold mb-2" style="color: #22c55e;">Histórias</h3>
+                            <p class="text-gray-600">Contos mágicos para ler e imaginar!</p>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Fun facts marquee -->
+            <div style="background: #7c3aed;" class="py-4 overflow-hidden">
+                <div class="flex gap-12 animate-marquee whitespace-nowrap"><span
+                        class="text-white text-lg font-semibold">🐙 O polvo tem 3 corações!</span> <span
+                        class="text-yellow-300 text-lg font-semibold">⭐ O Sol é 109x maior que a Terra!</span> <span
+                        class="text-white text-lg font-semibold">🦋 Borboletas provam com os pés!</span> <span
+                        class="text-yellow-300 text-lg font-semibold">🌙 A Lua se afasta 3,8cm por ano!</span> <span
+                        class="text-white text-lg font-semibold">🐬 Golfinhos dormem com um olho aberto!</span> <span
+                        class="text-yellow-300 text-lg font-semibold">🌈 O arco-íris é um círculo completo!</span> <span
+                        class="text-white text-lg font-semibold">🐙 O polvo tem 3 corações!</span> <span
+                        class="text-yellow-300 text-lg font-semibold">⭐ O Sol é 109x maior que a Terra!</span>
+                </div>
+                <style>
+                    @keyframes marqueeScroll {
+                        0% {
+                            transform: translateX(0);
+                        }
+
+                        100% {
+                            transform: translateX(-50%);
+                        }
+                    }
+
+                    .animate-marquee {
+                        animation: marqueeScroll 25s linear infinite;
+                    }
+                </style>
+            </div>
+        </section><!-- ==================== ACTIVITIES PAGE ==================== -->
+        <section id="page-activities" class="page-section">
+            <div style="background: linear-gradient(180deg, #ecfdf5 0%, #fef3c7 100%);" class="py-12 px-4 min-h-full">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="fun-title text-4xl sm:text-5xl font-bold text-center mb-2 scroll-fade"
+                        style="color: #7c3aed;">🎮 Atividades Educativas</h2>
+                    <p class="text-center text-gray-600 text-lg mb-10 scroll-fade">Escolha uma atividade e divirta-se
+                        aprendendo!</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8"><!-- WORD GAME -->
+                        <div class="activity-card rounded-3xl p-6 shadow-xl scroll-fade"
+                            style="background: white; border-top: 6px solid #8b5cf6;">
+                            <div class="flex items-center gap-3 mb-4"><span class="text-4xl">🔤</span>
+                                <h3 class="fun-title text-2xl font-bold" style="color: #7c3aed;">Adivinhe a Palavra</h3>
+                            </div>
+                            <p class="text-gray-600 mb-4">Descubra qual animal está escondido!</p>
+                            <div id="wordGameArea">
+                                <div class="text-center mb-4">
+                                    <p id="wordHint" class="font-semibold text-lg mb-3" style="color: #6d28d9;">💡 Dica:
+                                        Sou o rei da selva!</p>
+                                    <div id="wordSlots" class="flex justify-center gap-1 mb-4"></div>
+                                    <div id="wordKeyboard" class="flex flex-wrap justify-center gap-2 mb-3"></div>
+                                    <p id="wordMessage" class="font-bold text-lg min-h-[28px]"></p><button
+                                        id="wordNextBtn" class="hidden mt-2 px-6 py-2 rounded-full text-white font-bold"
+                                        style="background: #8b5cf6;" onclick="nextWord()">Próxima Palavra →</button>
+                                </div>
+                            </div>
+                        </div><!-- ANIMAL FACTS -->
+                        <div class="activity-card rounded-3xl p-6 shadow-xl scroll-fade"
+                            style="background: white; border-top: 6px solid #ec4899;">
+                            <div class="flex items-center gap-3 mb-4"><span class="text-4xl">🐾</span>
+                                <h3 class="fun-title text-2xl font-bold" style="color: #ec4899;">Curiosidades Animais
+                                </h3>
+                            </div>
+                            <p class="text-gray-600 mb-4">Toque para descobrir fatos incríveis!</p>
+                            <div id="animalFactArea" class="text-center">
+                                <div id="animalEmoji" class="text-7xl mb-4 transition-transform"
+                                    style="display:inline-block;">
+                                    🐙
+                                </div>
+                                <div id="animalFact" class="rounded-2xl p-4 mb-4 text-lg font-medium"
+                                    style="background: #fdf2f8; color: #831843;">
+                                    O polvo tem 3 corações e sangue azul!
+                                </div><button onclick="nextAnimalFact()"
+                                    class="px-6 py-3 rounded-full text-white font-bold hover:scale-105 transition-transform active:scale-95"
+                                    style="background: #ec4899;"> 🔄 Outro Animal! </button>
+                            </div>
+                        </div><!-- MINI QUIZ -->
+                        <div class="activity-card rounded-3xl p-6 shadow-xl scroll-fade"
+                            style="background: white; border-top: 6px solid #f59e0b;">
+                            <div class="flex items-center gap-3 mb-4"><span class="text-4xl">❓</span>
+                                <h3 class="fun-title text-2xl font-bold" style="color: #f59e0b;">Mini Quiz</h3>
+                            </div>
+                            <div id="quizArea">
+                                <div id="quizProgress" class="flex gap-1 mb-4"></div>
+                                <p id="quizQuestion" class="font-bold text-lg mb-4" style="color: #92400e;"></p>
+                                <div id="quizOptions" class="grid grid-cols-1 gap-3"></div>
+                                <div id="quizResult" class="hidden text-center mt-4">
+                                    <div id="quizStars" class="text-4xl mb-2"></div>
+                                    <p id="quizScore" class="fun-title text-2xl font-bold" style="color: #f59e0b;"></p>
+                                    <button onclick="resetQuiz()"
+                                        class="mt-3 px-6 py-2 rounded-full text-white font-bold"
+                                        style="background: #f59e0b;">🔄 Jogar Novamente</button>
+                                </div>
+                            </div>
+                        </div><!-- MATH CHALLENGE -->
+                        <div class="activity-card rounded-3xl p-6 shadow-xl scroll-fade"
+                            style="background: white; border-top: 6px solid #22c55e;">
+                            <div class="flex items-center gap-3 mb-4"><span class="text-4xl">🧮</span>
+                                <h3 class="fun-title text-2xl font-bold" style="color: #22c55e;">Desafio Matemático</h3>
+                            </div>
+                            <p class="text-gray-600 mb-4">Resolva as continhas!</p>
+                            <div id="mathArea" class="text-center">
+                                <div id="mathScore" class="flex items-center justify-center gap-2 mb-3"><span
+                                        class="text-sm font-semibold text-gray-500">Pontos:</span> <span id="mathPoints"
+                                        class="fun-title text-2xl font-bold" style="color: #22c55e;">0</span>
+                                </div>
+                                <p id="mathProblem" class="fun-title text-4xl font-bold mb-6" style="color: #166534;">
+                                </p>
+                                <div id="mathOptions" class="grid grid-cols-2 gap-3 max-w-xs mx-auto"></div>
+                                <p id="mathMessage" class="font-bold text-lg mt-3 min-h-[28px]"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section><!-- ==================== STORIES PAGE ==================== -->
+        <section id="page-stories" class="page-section">
+            <div style="background: linear-gradient(180deg, #eff6ff 0%, #fce7f3 100%);" class="py-12 px-4 min-h-full">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="fun-title text-4xl sm:text-5xl font-bold text-center mb-2 scroll-fade"
+                        style="color: #7c3aed;">📚 Histórias Mágicas</h2>
+                    <p class="text-center text-gray-600 text-lg mb-10 scroll-fade">Clique em uma história para ler!</p>
+                    <div class="space-y-8" id="storiesContainer"><!-- Story 1 -->
+                        <div class="story-card rounded-3xl overflow-hidden shadow-xl scroll-fade"
+                            style="background: white;">
+                            <div class="flex flex-col sm:flex-row">
+                                <div class="sm:w-1/3 p-8 flex items-center justify-center text-8xl"
+                                    style="background: linear-gradient(135deg, #ddd6fe, #c4b5fd);">
+                                    🐢
+                                </div>
+                                <div class="sm:w-2/3 p-6">
+                                    <h3 class="fun-title text-2xl font-bold mb-2" style="color: #7c3aed;">A Tartaruga
+                                        Curiosa</h3>
+                                    <p class="text-gray-500 text-sm mb-3">✨ Uma história sobre curiosidade e amizade</p>
+                                    <div class="story-content hidden" id="story1">
+                                        <p class="text-gray-700 leading-relaxed mb-3">Era uma vez uma tartaruguinha
+                                            chamada <strong>Tina</strong> que morava perto de um lago encantado. Todos
+                                            os dias, Tina via os peixes nadando rápido e ficava curiosa: <em>"Como será
+                                                o fundo do lago?"</em></p>
+                                        <p class="text-gray-700 leading-relaxed mb-3">Um dia, um peixinho dourado
+                                            chamado <strong>Sol</strong> apareceu e disse: <em>"Venha, eu te
+                                                mostro!"</em> Tina teve medo, mas Sol prometeu ficar ao seu lado.</p>
+                                        <p class="text-gray-700 leading-relaxed mb-3">Juntos, descobriram conchas
+                                            coloridas, plantas dançantes e até uma caverna brilhante! Tina aprendeu que
+                                            quando temos um amigo corajoso, podemos explorar o mundo inteiro. 🌟</p>
+                                        <p class="font-semibold mt-4 px-4 py-2 rounded-xl text-center"
+                                            style="color: #7c3aed; background: #ede9fe;"><strong>Moral:</strong> A
+                                            curiosidade nos leva a descobertas incríveis quando temos amigos ao nosso
+                                            lado!</p>
+                                    </div><button
+                                        class="story-toggle mt-3 px-5 py-2 rounded-full text-white font-bold text-sm hover:scale-105 transition-transform"
+                                        style="background: #8b5cf6;" onclick="toggleStory('story1', this)">📖 Ler
+                                        História</button>
+                                </div>
+                            </div>
+                        </div><!-- Story 2 -->
+                        <div class="story-card rounded-3xl overflow-hidden shadow-xl scroll-fade"
+                            style="background: white;">
+                            <div class="flex flex-col sm:flex-row">
+                                <div class="sm:w-1/3 p-8 flex items-center justify-center text-8xl"
+                                    style="background: linear-gradient(135deg, #fbcfe8, #f9a8d4);">
+                                    🌙
+                                </div>
+                                <div class="sm:w-2/3 p-6">
+                                    <h3 class="fun-title text-2xl font-bold mb-2" style="color: #ec4899;">A Estrela que
+                                        Queria Brilhar</h3>
+                                    <p class="text-gray-500 text-sm mb-3">⭐ Uma história sobre acreditar em si mesmo</p>
+                                    <div class="story-content hidden" id="story2">
+                                        <p class="text-gray-700 leading-relaxed mb-3">No céu noturno, havia uma
+                                            estrelinha chamada <strong>Liz</strong> que brilhava bem fraquinho. As
+                                            outras estrelas riam: <em>"Você é muito pequena para brilhar!"</em></p>
+                                        <p class="text-gray-700 leading-relaxed mb-3">Uma noite, uma menininha olhou
+                                            para o céu e disse: <em>"Mamãe, aquela estrelinha é a mais bonita de
+                                                todas!"</em> Liz ficou tão feliz que começou a brilhar cada vez mais
+                                            forte!</p>
+                                        <p class="text-gray-700 leading-relaxed mb-3">As outras estrelas ficaram
+                                            surpresas. A Lua sorriu e disse: <em>"Nunca subestime uma luz pequena. Às
+                                                vezes, é a que mais ilumina o coração."</em> ✨</p>
+                                        <p class="font-semibold mt-4 px-4 py-2 rounded-xl text-center"
+                                            style="color: #ec4899; background: #fdf2f8;"><strong>Moral:</strong> Não
+                                            importa o tamanho — todos nós temos uma luz especial!</p>
+                                    </div><button
+                                        class="story-toggle mt-3 px-5 py-2 rounded-full text-white font-bold text-sm hover:scale-105 transition-transform"
+                                        style="background: #ec4899;" onclick="toggleStory('story2', this)">📖 Ler
+                                        História</button>
+                                </div>
+                            </div>
+                        </div><!-- Story 3 -->
+                        <div class="story-card rounded-3xl overflow-hidden shadow-xl scroll-fade"
+                            style="background: white;">
+                            <div class="flex flex-col sm:flex-row">
+                                <div class="sm:w-1/3 p-8 flex items-center justify-center text-8xl"
+                                    style="background: linear-gradient(135deg, #bbf7d0, #86efac);">
+                                    🌳
+                                </div>
+                                <div class="sm:w-2/3 p-6">
+                                    <h3 class="fun-title text-2xl font-bold mb-2" style="color: #22c55e;">A Árvore dos
+                                        Desejos</h3>
+                                    <p class="text-gray-500 text-sm mb-3">🍃 Uma história sobre gentileza</p>
+                                    <div class="story-content hidden" id="story3">
+                                        <p class="text-gray-700 leading-relaxed mb-3">No centro de uma floresta
+                                            encantada, havia uma árvore mágica. Quem sussurrasse um desejo gentil, a
+                                            árvore fazia acontecer!</p>
+                                        <p class="text-gray-700 leading-relaxed mb-3">Um coelhinho pediu: <em>"Quero que
+                                                meu amigo sapo não tenha mais medo do escuro."</em> A árvore fez
+                                            vagalumes aparecerem toda noite perto da casa do sapo! 🌟</p>
+                                        <p class="text-gray-700 leading-relaxed mb-3">Uma passarinha pediu: <em>"Quero
+                                                que todos os filhotes tenham um ninho quentinho."</em> E folhas macias
+                                            caíram por toda a floresta! 🍂</p>
+                                        <p class="font-semibold mt-4 px-4 py-2 rounded-xl text-center"
+                                            style="color: #22c55e; background: #f0fdf4;"><strong>Moral:</strong> Quando
+                                            desejamos coisas boas para os outros, o mundo fica mais bonito!</p>
+                                    </div><button
+                                        class="story-toggle mt-3 px-5 py-2 rounded-full text-white font-bold text-sm hover:scale-105 transition-transform"
+                                        style="background: #22c55e;" onclick="toggleStory('story3', this)">📖 Ler
+                                        História</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section><!-- ==================== CONTACT PAGE ==================== -->
+        <section id="page-contact" class="page-section">
+            <div style="background: linear-gradient(180deg, #fef3c7 0%, #fce7f3 50%, #ede9fe 100%);"
+                class="py-12 px-4 min-h-full">
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="fun-title text-4xl sm:text-5xl font-bold text-center mb-10 scroll-fade"
+                        style="color: #7c3aed;">💌 Contato</h2>
+                    <div class="rounded-3xl p-8 shadow-xl scroll-fade" style="background: white;">
+                        <div class="text-center mb-8">
+                            <div class="text-6xl mb-4">
+                                🌈
+                            </div>
+                            <h3 class="fun-title text-3xl font-bold mb-2" style="color: #7c3aed;">Aprender Brincando
+                            </h3>
+                            <p id="contactDescription" class="text-gray-600 text-lg">Um site feito com carinho para
+                                crianças curiosas!</p>
+                        </div>
+                        <div class="rounded-2xl p-6 mb-6" style="background: #faf5ff;">
+                            <h4 class="fun-title text-xl font-bold mb-4" style="color: #7c3aed;">👩‍💻 Equipe
+                                Desenvolvedora</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="flex items-center gap-3 p-3 rounded-xl" style="background: white;"><span
+                                        class="text-3xl">👩‍🎨</span>
+                                    <div>
+                                        <p class="font-bold" style="color: #7c3aed;">KidsTech Soluções</p>
+                                        <p class="text-sm text-gray-500">Desenvolvimento</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 rounded-xl" style="background: white;"><span
+                                        class="text-3xl">🎓</span>
+                                    <div>
+                                        <p class="font-bold" style="color: #ec4899;">Aprender Brincando</p>
+                                        <p class="text-sm text-gray-500">Organização Educacional</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl p-6 mb-6" style="background: #fefce8;">
+                            <h4 class="fun-title text-xl font-bold mb-3" style="color: #f59e0b;">📝 Sobre o Projeto</h4>
+                            <p class="text-gray-700 leading-relaxed">Este site foi criado para crianças de <strong>6 a 9
+                                    anos</strong> com o objetivo de estimular o aprendizado de forma divertida e
+                                interativa. Aqui você encontra jogos educativos, curiosidades incríveis, desafios
+                                matemáticos e histórias encantadoras!</p>
+                        </div>
+                        <div class="rounded-2xl p-6 text-center" style="background: #ecfdf5;">
+                            <h4 class="fun-title text-xl font-bold mb-3" style="color: #22c55e;">🛠️ Tecnologias
+                                Utilizadas</h4>
+                            <div class="flex flex-wrap justify-center gap-3"><span
+                                    class="px-4 py-2 rounded-full text-sm font-bold"
+                                    style="background: #dbeafe; color: #1e40af;">HTML</span> <span
+                                    class="px-4 py-2 rounded-full text-sm font-bold"
+                                    style="background: #fce7f3; color: #9d174d;">CSS</span> <span
+                                    class="px-4 py-2 rounded-full text-sm font-bold"
+                                    style="background: #fef3c7; color: #92400e;">JavaScript</span> <span
+                                    class="px-4 py-2 rounded-full text-sm font-bold"
+                                    style="background: #d1fae5; color: #065f46;">GSAP</span> <span
+                                    class="px-4 py-2 rounded-full text-sm font-bold"
+                                    style="background: #ede9fe; color: #5b21b6;">Tailwind CSS</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-500 mt-8 scroll-fade">Feito com 💜 pela equipe KidsTech Soluções
+                        Digitais © 2024</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        // ======== CONFIG & SDK ========
+        const defaultConfig = {
+            site_title: 'Aprender Brincando',
+            welcome_message: 'Explore, aprenda e divirta-se!',
+            contact_description: 'Um site feito com carinho para crianças curiosas!',
+            background_color: '#7c3aed',
+            surface_color: '#ffffff',
+            text_color: '#1f2937',
+            primary_action_color: '#facc15',
+            secondary_action_color: '#ec4899',
+            font_family: 'Quicksand',
+            font_size: 16
+        };
+
+        function applyConfig(config) {
+            const c = { ...defaultConfig, ...config };
+
+            // Text content
+            const navTitle = document.getElementById('navTitle');
+            if (navTitle) navTitle.textContent = c.site_title;
+            const heroTitle = document.getElementById('heroTitle');
+            if (heroTitle) heroTitle.textContent = c.site_title;
+            const heroSubtitle = document.getElementById('heroSubtitle');
+            if (heroSubtitle) heroSubtitle.textContent = c.welcome_message;
+            const contactDesc = document.getElementById('contactDescription');
+            if (contactDesc) contactDesc.textContent = c.contact_description;
+
+            // Colors
+            const nav = document.getElementById('mainNav');
+            if (nav) nav.style.background = c.background_color;
+
+            const hero = document.getElementById('heroSection');
+            if (hero) hero.style.background = `linear-gradient(135deg, ${c.background_color} 0%, ${adjustColor(c.background_color, 30)} 40%, ${c.secondary_action_color} 100%)`;
+
+            // Font
+            const wrapper = document.getElementById('appWrapper');
+            if (wrapper) {
+                wrapper.style.fontFamily = `${c.font_family}, Quicksand, sans-serif`;
+                const baseSize = c.font_size;
+                wrapper.style.fontSize = `${baseSize}px`;
+            }
+
+            document.querySelectorAll('.fun-title').forEach(el => {
+                el.style.fontFamily = `Baloo 2, ${c.font_family}, cursive`;
+            });
+        }
+
+        function adjustColor(hex, amount) {
+            let r = parseInt(hex.slice(1, 3), 16);
+            let g = parseInt(hex.slice(3, 5), 16);
+            let b = parseInt(hex.slice(5, 7), 16);
+            r = Math.min(255, r + amount);
+            g = Math.min(255, g + amount);
+            b = Math.min(255, b + amount);
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+
+        // SDK Init
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange: async (config) => { applyConfig(config); },
+                mapToCapabilities: (config) => ({
+                    recolorables: [
+                        { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+                        { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+                        { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+                        { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+                        { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+                    ],
+                    borderables: [],
+                    fontEditable: {
+                        get: () => config.font_family || defaultConfig.font_family,
+                        set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+                    },
+                    fontSizeable: {
+                        get: () => config.font_size || defaultConfig.font_size,
+                        set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+                    }
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ['site_title', config.site_title || defaultConfig.site_title],
+                    ['welcome_message', config.welcome_message || defaultConfig.welcome_message],
+                    ['contact_description', config.contact_description || defaultConfig.contact_description]
+                ])
+            });
+        }
+
+        // ======== NAVIGATION ========
+        let currentPage = 'home';
+
+        function navigateTo(page) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`page-${page}`).classList.add('active');
+            currentPage = page;
+
+            // Scroll to top
+            document.getElementById('appWrapper').scrollTop = 0;
+
+            // Re-run GSAP animations
+            setTimeout(() => initGSAP(), 100);
+
+            // Update nav active state
+            document.querySelectorAll('.nav-link').forEach((link, i) => {
+                const pages = ['home', 'activities', 'stories', 'contact'];
+                link.classList.toggle('active', pages[i] === page);
+            });
+        }
+
+        // ======== GSAP ANIMATIONS ========
+        function initGSAP() {
+            gsap.registerPlugin(ScrollTrigger);
+            ScrollTrigger.getAll().forEach(t => t.kill());
+
+            const wrapper = document.getElementById('appWrapper');
+
+            // Text reveal on home page
+            if (currentPage === 'home') {
+                gsap.to('.text-reveal-inner', {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    stagger: 0.15,
+                    ease: 'power3.out'
+                });
+            }
+
+            // Scroll fade animations
+            document.querySelectorAll('.scroll-fade').forEach(el => {
+                // Reset
+                gsap.set(el, { opacity: 0, y: 40 });
+
+                gsap.to(el, {
+                    scrollTrigger: {
+                        trigger: el,
+                        scroller: wrapper,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none'
+                    },
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.7,
+                    ease: 'power2.out'
+                });
+            });
+
+            ScrollTrigger.refresh();
+        }
+
+        // ======== WORD GAME ========
+        const words = [
+            { word: 'LEAO', hint: '💡 Dica: Sou o rei da selva!', emoji: '🦁' },
+            { word: 'GATO', hint: '💡 Dica: Mio e adoro dormir!', emoji: '🐱' },
+            { word: 'PATO', hint: '💡 Dica: Nado no lago e faço quá quá!', emoji: '🦆' },
+            { word: 'URSO', hint: '💡 Dica: Sou grande e adoro mel!', emoji: '🐻' },
+            { word: 'SAPO', hint: '💡 Dica: Pulo e vivo perto da água!', emoji: '🐸' }
+        ];
+        let currentWordIdx = 0;
+        let guessedLetters = [];
+        let wordSolved = false;
+
+        function initWordGame() {
+            const w = words[currentWordIdx];
+            guessedLetters = [];
+            wordSolved = false;
+            document.getElementById('wordHint').textContent = w.hint;
+            document.getElementById('wordMessage').textContent = '';
+            document.getElementById('wordNextBtn').classList.add('hidden');
+            renderWordSlots();
+            renderKeyboard();
+        }
+
+        function renderWordSlots() {
+            const w = words[currentWordIdx].word;
+            const container = document.getElementById('wordSlots');
+            container.innerHTML = '';
+            for (let i = 0; i < w.length; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'letter-slot';
+                slot.style.background = guessedLetters.includes(w[i]) ? '#ddd6fe' : '#f3f4f6';
+                slot.style.color = '#5b21b6';
+                slot.style.border = '3px solid ' + (guessedLetters.includes(w[i]) ? '#8b5cf6' : '#d1d5db');
+                slot.textContent = guessedLetters.includes(w[i]) ? w[i] : '';
+                container.appendChild(slot);
+            }
+        }
+
+        function renderKeyboard() {
+            const keyboard = document.getElementById('wordKeyboard');
+            keyboard.innerHTML = '';
+            'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'math-btn px-3 py-2 rounded-xl font-bold text-sm';
+                btn.disabled = guessedLetters.includes(letter) || wordSolved;
+                btn.style.background = guessedLetters.includes(letter) ? '#e5e7eb' : '#8b5cf6';
+                btn.style.color = guessedLetters.includes(letter) ? '#9ca3af' : 'white';
+                btn.textContent = letter;
+                btn.onclick = () => guessLetter(letter);
+                keyboard.appendChild(btn);
+            });
+        }
+
+        function guessLetter(letter) {
+            if (wordSolved) return;
+            guessedLetters.push(letter);
+            const w = words[currentWordIdx].word;
+            renderWordSlots();
+            renderKeyboard();
+
+            if (w.split('').every(l => guessedLetters.includes(l))) {
+                wordSolved = true;
+                document.getElementById('wordMessage').innerHTML = `${words[currentWordIdx].emoji} Parabéns! A palavra era <strong>${w}</strong>!`;
+                document.getElementById('wordMessage').style.color = '#22c55e';
+                document.getElementById('wordNextBtn').classList.remove('hidden');
+                launchConfetti();
+            }
+        }
+
+        function nextWord() {
+            currentWordIdx = (currentWordIdx + 1) % words.length;
+            initWordGame();
+        }
+
+        // ======== ANIMAL FACTS ========
+        const animalFacts = [
+            { emoji: '🐙', fact: 'O polvo tem 3 corações e sangue azul!' },
+            { emoji: '🦒', fact: 'A língua da girafa tem 45 centímetros!' },
+            { emoji: '🐬', fact: 'Golfinhos dormem com um olho aberto!' },
+            { emoji: '🦜', fact: 'Papagaios podem viver mais de 80 anos!' },
+            { emoji: '🐘', fact: 'Elefantes se reconhecem no espelho!' },
+            { emoji: '🦈', fact: 'Tubarões existem antes dos dinossauros!' },
+            { emoji: '🐝', fact: 'Abelhas podem reconhecer rostos humanos!' },
+            { emoji: '🐧', fact: 'Pinguins pedem parceiros em "casamento" com pedras!' }
+        ];
+        let currentFactIdx = 0;
+
+        function nextAnimalFact() {
+            currentFactIdx = (currentFactIdx + 1) % animalFacts.length;
+            const f = animalFacts[currentFactIdx];
+            const emojiEl = document.getElementById('animalEmoji');
+            const factEl = document.getElementById('animalFact');
+
+            gsap.to(emojiEl, {
+                scale: 0, rotation: 180, duration: 0.3,
+                onComplete: () => {
+                    emojiEl.textContent = f.emoji;
+                    gsap.to(emojiEl, { scale: 1, rotation: 0, duration: 0.5, ease: 'back.out(2)' });
+                }
+            });
+            gsap.to(factEl, {
+                opacity: 0, y: 20, duration: 0.2,
+                onComplete: () => {
+                    factEl.textContent = f.fact;
+                    gsap.to(factEl, { opacity: 1, y: 0, duration: 0.4 });
+                }
+            });
+        }
+
+        // ======== MINI QUIZ ========
+        const quizQuestions = [
+            { q: '🌍 Qual é o maior planeta do sistema solar?', options: ['Terra', 'Júpiter', 'Saturno', 'Marte'], correct: 1 },
+            { q: '🦴 Quantos ossos tem o corpo humano adulto?', options: ['106', '206', '306', '406'], correct: 1 },
+            { q: '💧 Qual a fórmula da água?', options: ['CO2', 'O2', 'H2O', 'NaCl'], correct: 2 },
+            { q: '🌈 Quantas cores tem o arco-íris?', options: ['5', '6', '7', '8'], correct: 2 },
+            { q: '🦕 Os dinossauros viveram na era...', options: ['Cenozoica', 'Paleozoica', 'Mesozoica', 'Moderna'], correct: 2 }
+        ];
+        let quizIdx = 0;
+        let quizScore = 0;
+        let quizAnswered = false;
+
+        function initQuiz() {
+            quizIdx = 0;
+            quizScore = 0;
+            document.getElementById('quizResult').classList.add('hidden');
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            quizAnswered = false;
+            const q = quizQuestions[quizIdx];
+
+            // Progress
+            const prog = document.getElementById('quizProgress');
+            prog.innerHTML = '';
+            for (let i = 0; i < quizQuestions.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'w-full h-2 rounded-full';
+                dot.style.background = i < quizIdx ? '#22c55e' : i === quizIdx ? '#f59e0b' : '#e5e7eb';
+                prog.appendChild(dot);
+            }
+
+            document.getElementById('quizQuestion').textContent = q.q;
+            const optContainer = document.getElementById('quizOptions');
+            optContainer.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option rounded-xl p-3 font-semibold text-left';
+                btn.style.background = '#fffbeb';
+                btn.style.color = '#92400e';
+                btn.textContent = opt;
+                btn.onclick = () => answerQuiz(i, btn);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function answerQuiz(idx, btn) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+            const q = quizQuestions[quizIdx];
+
+            if (idx === q.correct) {
+                btn.classList.add('correct');
+                quizScore++;
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('quizOptions').children[q.correct].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                quizIdx++;
+                if (quizIdx < quizQuestions.length) {
+                    renderQuizQuestion();
+                } else {
+                    showQuizResult();
+                }
+            }, 1200);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quizOptions').innerHTML = '';
+            document.getElementById('quizQuestion').textContent = '';
+            const result = document.getElementById('quizResult');
+            result.classList.remove('hidden');
+
+            const stars = Math.round((quizScore / quizQuestions.length) * 5);
+            let starsHtml = '';
+            for (let i = 0; i < 5; i++) {
+                starsHtml += `<span class="star-pop" style="animation-delay:${i * 0.15}s">${i < stars ? '⭐' : '☆'}</span>`;
+            }
+            document.getElementById('quizStars').innerHTML = starsHtml;
+            document.getElementById('quizScore').textContent = `Você acertou ${quizScore} de ${quizQuestions.length}!`;
+
+            if (quizScore >= 4) launchConfetti();
+        }
+
+        function resetQuiz() { initQuiz(); }
+
+        // ======== MATH CHALLENGE ========
+        let mathPoints = 0;
+
+        function generateMath() {
+            const ops = ['+', '-', '×'];
+            const op = ops[Math.floor(Math.random() * ops.length)];
+            let a, b, answer;
+
+            if (op === '+') {
+                a = Math.floor(Math.random() * 20) + 1;
+                b = Math.floor(Math.random() * 20) + 1;
+                answer = a + b;
+            } else if (op === '-') {
+                a = Math.floor(Math.random() * 20) + 5;
+                b = Math.floor(Math.random() * a) + 1;
+                answer = a - b;
+            } else {
+                a = Math.floor(Math.random() * 10) + 1;
+                b = Math.floor(Math.random() * 10) + 1;
+                answer = a * b;
+            }
+
+            document.getElementById('mathProblem').textContent = `${a} ${op} ${b} = ?`;
+            document.getElementById('mathMessage').textContent = '';
+
+            // Generate options
+            const options = [answer];
+            while (options.length < 4) {
+                const wrong = answer + (Math.floor(Math.random() * 10) - 5);
+                if (wrong !== answer && wrong >= 0 && !options.includes(wrong)) {
+                    options.push(wrong);
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const container = document.getElementById('mathOptions');
+            container.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'math-btn rounded-2xl p-4 font-bold text-xl';
+                btn.style.background = '#dcfce7';
+                btn.style.color = '#166534';
+                btn.textContent = opt;
+                btn.onclick = () => checkMath(opt, answer, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkMath(selected, answer, btn) {
+            const msg = document.getElementById('mathMessage');
+            if (selected === answer) {
+                mathPoints += 10;
+                document.getElementById('mathPoints').textContent = mathPoints;
+                msg.textContent = '🎉 Correto! Muito bem!';
+                msg.style.color = '#22c55e';
+                btn.style.background = '#22c55e';
+                btn.style.color = 'white';
+                gsap.from(document.getElementById('mathPoints'), { scale: 1.5, duration: 0.3 });
+                setTimeout(generateMath, 1000);
+            } else {
+                msg.textContent = '😅 Tente de novo!';
+                msg.style.color = '#ef4444';
+                btn.style.background = '#fee2e2';
+                gsap.fromTo(btn, { x: -5 }, { x: 5, duration: 0.1, repeat: 3, yoyo: true });
+            }
+        }
+
+        // ======== STORIES ========
+        function toggleStory(id, btn) {
+            const content = document.getElementById(id);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                btn.textContent = '📕 Fechar História';
+                gsap.from(content, { height: 0, opacity: 0, duration: 0.5, ease: 'power2.out' });
+            } else {
+                gsap.to(content, {
+                    opacity: 0, duration: 0.3,
+                    onComplete: () => {
+                        content.classList.add('hidden');
+                        content.style.opacity = '';
+                        btn.textContent = '📖 Ler História';
+                    }
+                });
+            }
+        }
+
+        // ======== CONFETTI ========
+        function launchConfetti() {
+            const colors = ['#8b5cf6', '#ec4899', '#f59e0b', '#22c55e', '#60a5fa', '#facc15'];
+            for (let i = 0; i < 40; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.top = '-10px';
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                document.body.appendChild(piece);
+
+                gsap.to(piece, {
+                    y: window.innerHeight + 50,
+                    x: (Math.random() - 0.5) * 200,
+                    rotation: Math.random() * 720,
+                    duration: 1.5 + Math.random(),
+                    ease: 'power1.in',
+                    delay: Math.random() * 0.5,
+                    onComplete: () => piece.remove()
+                });
+            }
+        }
+
+        // ======== INIT ========
+        applyConfig(defaultConfig);
+        initWordGame();
+        initQuiz();
+        generateMath();
+
+        setTimeout(() => {
+            initGSAP();
+            lucide.createIcons();
+        }, 100);
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9ddfabb862a1cd97',t:'MTc3Mzc4OTAyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
